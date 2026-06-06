@@ -14,12 +14,16 @@ export async function GET(request: Request) {
   const limit = Math.min(Number(url.searchParams.get("limit") ?? 100), 500);
   const action = url.searchParams.get("action") as string | null;
 
-  const logs = await prisma.auditLog.findMany({
-    ...(action ? { where: { action: action as any } } : {}),
-    include: { actor: { select: { name: true, role: true } } },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-  });
+  // 使用原始SQL查询以绕过Prisma枚举类型检查
+  const logs = await prisma.$queryRawUnsafe<Record<string, unknown>[]>(
+    `SELECT al.*, u.name as "actorName", u.role as "actorRole"
+     FROM "AuditLog" al
+     LEFT JOIN "User" u ON u.id = al."actorId"
+     ${action ? `WHERE al.action = $1` : ""}
+     ORDER BY al."createdAt" DESC
+     LIMIT $2`,
+    ...(action ? [action, limit] : [limit])
+  );
 
   return Response.json({ ok: true, logs });
 }
