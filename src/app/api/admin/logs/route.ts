@@ -14,16 +14,27 @@ export async function GET(request: Request) {
   const limit = Math.min(Number(url.searchParams.get("limit") ?? 100), 500);
   const action = url.searchParams.get("action") as string | null;
 
-  // 使用原始SQL查询以绕过Prisma枚举类型检查
-  const logs = await prisma.$queryRawUnsafe<Record<string, unknown>[]>(
-    `SELECT al.*, u.name as "actorName", u.role as "actorRole"
-     FROM "AuditLog" al
-     LEFT JOIN "User" u ON u.id = al."actorId"
-     ${action ? `WHERE al.action = $1` : ""}
-     ORDER BY al."createdAt" DESC
-     LIMIT $2`,
-    ...(action ? [action, limit] : [limit])
-  );
+  let logs: Record<string, unknown>[];
+  if (action) {
+    logs = await prisma.$queryRawUnsafe<Record<string, unknown>[]>(
+      `SELECT al.*, u.name as "actorName", u.role as "actorRole"
+       FROM "AuditLog" al
+       LEFT JOIN "User" u ON u.id = al."actorId"
+       WHERE al.action = $1
+       ORDER BY al."createdAt" DESC
+       LIMIT $2`,
+      action, limit
+    );
+  } else {
+    logs = await prisma.$queryRawUnsafe<Record<string, unknown>[]>(
+      `SELECT al.*, u.name as "actorName", u.role as "actorRole"
+       FROM "AuditLog" al
+       LEFT JOIN "User" u ON u.id = al."actorId"
+       ORDER BY al."createdAt" DESC
+       LIMIT $1`,
+      limit
+    );
+  }
 
   return Response.json({ ok: true, logs });
 }

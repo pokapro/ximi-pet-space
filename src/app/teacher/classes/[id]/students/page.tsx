@@ -12,6 +12,7 @@ interface Student {
   totalPoints: number;
   level: number;
   petName: string;
+  petStage: string;
   mood: number;
 }
 
