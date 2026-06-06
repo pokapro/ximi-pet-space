@@ -126,3 +126,6 @@ pnpm build
 ```
 
 `pnpm build` 和实际访问数据库前必须配置有效的 `DATABASE_URL` 和 `AUTH_SECRET`。
+
+---
+> 🚀 公网部署: https://ximi-pet-space.vercel.app | 部署时间: 2026-06-06 16:46
