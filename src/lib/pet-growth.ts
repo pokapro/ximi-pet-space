@@ -44,16 +44,29 @@ export function randomPetName(stage: PetStage): string {
   return names[Math.floor(Math.random() * names.length)];
 }
 
-export function getSkin(stage: PetStage, index?: number): string {
-  const skins: Record<PetStage, string[]> = {
-    Egg: ["🥚", "🥚✨", "🌟🥚"],
-    Baby: ["🐣", "🐰", "🦊", "🐥"],
-    Growth: ["🐻", "🦌", "🐭", "🦎", "🐱"],
-    Evolution: ["🦅", "🦄", "🦁", "🐉", "🦈"],
-    Rare: ["🦚", "🐲", "🦊✨", "🦄🌟", "🐺🌙"],
-  };
-  const list = skins[stage];
+/**
+ * 3D可爱卡通宠物图片配置
+ * 每个阶段有2-3种风格，前端按index或随机选取
+ */
+export const PET_IMAGES: Record<PetStage, string[]> = {
+  Egg: ["/pets/egg_01.png", "/pets/egg_02.png"],
+  Baby: ["/pets/baby_01.png", "/pets/baby_02.png"],
+  Growth: ["/pets/growth_01.png", "/pets/growth_02.png"],
+  Evolution: ["/pets/evolution_01.png", "/pets/evolution_02.png"],
+  Rare: ["/pets/rare_01.png", "/pets/rare_02.png"],
+};
+
+/** 获取宠物图片URL */
+export function getPetImage(stage: PetStage, index?: number): string {
+  const list = PET_IMAGES[stage];
   return list[index ?? Math.floor(Math.random() * list.length)] ?? list[0];
+}
+
+/**
+ * 兼容旧接口 — 返回图片URL（替代emoji）
+ */
+export function getSkin(stage: PetStage, index?: number): string {
+  return getPetImage(stage, index);
 }
 
 export function moodAfterDelta(current: number, delta: number): number {
@@ -61,11 +74,11 @@ export function moodAfterDelta(current: number, delta: number): number {
 }
 
 export const MOOD_ICONS: Record<string, string> = {
+  excited: "🤩",
   happy: "😄",
   calm: "😊",
   tired: "😴",
   sad: "😢",
-  excited: "🤩",
 };
 
 export function getMoodState(mood: number): string {

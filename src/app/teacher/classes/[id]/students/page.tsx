@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { getPetImage } from "@/lib/pet-growth";
 
 interface Student {
   id: string;
@@ -145,7 +146,7 @@ export default function StudentsPage() {
           <p className="mt-8 text-center text-slate-500">加载中...</p>
         ) : students.length === 0 ? (
           <div className="mt-8 rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center">
-            <p className="text-4xl">🐣</p>
+            <img src="/pets/baby_01.png" alt="宠物蛋" className="mx-auto h-24 w-24 object-contain opacity-40" />
             <p className="mt-4 text-slate-500">还没有学生，添加第一位学生吧。</p>
           </div>
         ) : (
@@ -156,6 +157,7 @@ export default function StudentsPage() {
                   <div className="text-center">
                     <p className="text-2xl">{getMoodEmoji(s.mood)}</p>
                     <p className="mt-1 text-xs text-slate-500">Lv.{s.level}</p>
+                    <img src={getPetImage(s.petStage as any)} alt={s.petName} className="mx-auto mt-1 h-8 w-8 object-contain" />
                   </div>
                   <div>
                     <p className="font-bold">{s.name}</p>

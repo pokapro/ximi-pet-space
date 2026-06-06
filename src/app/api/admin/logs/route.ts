@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   const action = url.searchParams.get("action") as string | null;
 
   const where = action
-    ? { action: { equals: action } as any }
+    ? { action: { equals: action } }
     : undefined;
 
   const logs = await prisma.auditLog.findMany({
