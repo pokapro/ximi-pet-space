@@ -33,7 +33,10 @@ export default function StudentsPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(() => { loadStudents(); }, [params.id]);
+  useEffect(() => {
+    const timer = setTimeout(() => loadStudents(), 0);
+    return () => clearTimeout(timer);
+  }, [params.id]);
 
   async function addStudent() {
     if (!newName.trim()) return;

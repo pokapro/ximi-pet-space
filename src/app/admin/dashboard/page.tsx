@@ -15,14 +15,16 @@ export default async function AdminDashboardPage() {
     prisma.pointLog.count(),
   ]);
 
+  const now = new Date();
+  const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
   const expiringSoon = await prisma.user.count({
     where: {
       role: "Teacher",
       status: "Active",
       subscription: {
         expiresAt: {
-          lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          gte: new Date(),
+          lte: weekFromNow,
+          gte: now,
         },
       },
     },

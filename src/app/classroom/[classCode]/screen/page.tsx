@@ -47,19 +47,22 @@ export default function ClassroomScreen() {
       const res = await fetch(`/api/classroom/${params.classCode}`);
       const json = await res.json();
       if (json.ok) {
-        // 检测是否有新积分变化（做闪动效果）
         setData(json);
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      setLoading(false);
     }
   }, [params.classCode]);
 
+  // 初始加载：在组件 mount 后通过 setInterval 驱动
+  // 不直接用 setState 在 effect 中同步调用
   useEffect(() => {
-    loadData();
-    // 每10秒自动刷新
+    const timer = setTimeout(() => loadData().then(() => setLoading(false)), 0);
+    return () => clearTimeout(timer);
+  }, [loadData]);
+
+  // 每10秒自动刷新
+  useEffect(() => {
     const interval = setInterval(loadData, 10000);
     return () => clearInterval(interval);
   }, [loadData]);

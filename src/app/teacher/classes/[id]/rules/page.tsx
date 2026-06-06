@@ -29,7 +29,10 @@ export default function RulesPage() {
       .finally(() => setLoading(false));
   }
 
-  useEffect(() => { loadRules(); }, [params.id]);
+  useEffect(() => {
+    const timer = setTimeout(() => loadRules(), 0);
+    return () => clearTimeout(timer);
+  }, [params.id]);
 
   async function addRule() {
     if (!name.trim()) return;

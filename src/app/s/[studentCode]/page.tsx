@@ -72,7 +72,10 @@ export default function StudentQueryPage() {
     }
   }, [params.studentCode]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => {
+    const timer = setTimeout(() => loadData(), 0);
+    return () => clearTimeout(timer);
+  }, [loadData]);
 
   async function interact(type: string) {
     if (!student || interacting) return;

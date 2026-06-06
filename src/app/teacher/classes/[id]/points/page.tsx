@@ -59,7 +59,10 @@ export default function PointsPage() {
     }).finally(() => setLoading(false));
   }, [params.id]);
 
-  useEffect(() => { loadAll(); }, [loadAll]);
+  useEffect(() => {
+    const timer = setTimeout(() => loadAll(), 0);
+    return () => clearTimeout(timer);
+  }, [loadAll]);
 
   async function addPoints(studentId: string, points: number, ruleId?: string) {
     setMessage("");

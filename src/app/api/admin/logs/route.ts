@@ -12,10 +12,14 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const limit = Math.min(Number(url.searchParams.get("limit") ?? 100), 500);
-  const action = url.searchParams.get("action");
+  const action = url.searchParams.get("action") as string | null;
+
+  const where = action
+    ? { action: { equals: action } as any }
+    : undefined;
 
   const logs = await prisma.auditLog.findMany({
-    ...(action ? { where: { action: action as any } } : {}),
+    ...(where ? { where } : {}),
     include: { actor: { select: { name: true, role: true } } },
     orderBy: { createdAt: "desc" },
     take: limit,
